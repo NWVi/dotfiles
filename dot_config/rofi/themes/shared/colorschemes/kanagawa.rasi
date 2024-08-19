@@ -1,0 +1,14 @@
+/*
+ * Kanagawa Rofi
+ * Original author : rebelot
+ * Ported by : NWVi
+ */
+
+* {
+    background:     #1f1f28;
+    background-alt: #2a2a37;
+    foreground:     #dcd7ba;
+    selected:       #2d4f67;
+    active:         #98bb6c;
+    urgent:         #e46876;
+}

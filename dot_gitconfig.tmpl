@@ -1,0 +1,62 @@
+[user]
+    name = Sebastian Olsen
+    email = {{ .email | quote }}
+    signingkey = /home/seb/.ssh/id_github.pub
+
+[credential]
+    helper = cache --timeout=3600
+
+[core]
+    quotepath = false
+    autocrlf = input
+    excludesFile = ~/.gitignore
+    pager = delta
+
+[diff]
+    tool = nvim
+    # Use better, descriptive initials (c, i, w) instead of a/b.
+    mnemonicprefix = yes
+    colorMoved = default
+
+[merge]
+    tool = nvim
+    conflictstyle = diff3
+
+[mergetool "nvim"]
+    cmd = nvim $MERGED
+
+[difftool "nvim"]
+    cmd = nvim -d $LOCAL $REMOTE
+
+[pull]
+    rebase = merges
+
+[rebase]
+    autoStash = true
+    stat = true
+
+[log]
+    abbrevCommit = true
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    file-decoration-style = 11 overline
+    file-style = 232 bold 11
+    file-copied-label = [C]
+    file-modified-label = [M]
+    file-removed-label = [⛌]
+    file-renamed-label = [→]
+
+[init]
+    defaultBranch = main
+
+[gpg]
+    format = ssh
+
+[alias]
+    lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
+    lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    lg = lg1
