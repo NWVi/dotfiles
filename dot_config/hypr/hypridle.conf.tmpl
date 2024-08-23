@@ -17,6 +17,12 @@ general {
 #     on-resume = brightnessctl -rd rgb:kbd_backlight        # turn on keyboard backlight.
 # }
 
+{{- if eq .chezmoi.hostname "seb-archlinux" }}
+listener {
+    timeout = 180                                 # 30min
+    on-timeout = loginctl lock-session            # lock screen when timeout has passed
+}
+{{- else }}
 listener {
     timeout = 1800                                # 30min
     on-timeout = loginctl lock-session            # lock screen when timeout has passed
@@ -28,7 +34,8 @@ listener {
     on-resume = hyprctl dispatch dpms on          # screen on when activity is detected after timeout has fired.
 }
 
-# listener {
-#     timeout = 1800                                # 30min
-#     on-timeout = systemctl suspend                # suspend pc
-# }
+listener {
+    timeout = 6000                                # 60min
+    on-timeout = systemctl suspend                # suspend pc
+}
+{{- end }}
