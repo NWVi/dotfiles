@@ -13,20 +13,23 @@
     pager = delta
 
 [diff]
-    tool = nvim
+    tool = difftastic
     # Use better, descriptive initials (c, i, w) instead of a/b.
     mnemonicprefix = yes
     colorMoved = default
+
+[difftool]
+        prompt = false
+
+[difftool "difftastic"]
+        cmd = difft "$LOCAL" "$REMOTE"
 
 [merge]
     tool = nvim
     conflictstyle = diff3
 
-[mergetool "nvim"]
-    cmd = nvim $MERGED
-
-[difftool "nvim"]
-    cmd = nvim -d $LOCAL $REMOTE
+[pager]
+        difftool = true
 
 [pull]
     rebase = merges
@@ -60,3 +63,6 @@
     lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
     lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
     lg = lg1
+    dft = difftool
+    # `git dlog` to show `git log -p` with difftastic.
+    dlog = -c diff.external=difft log -p --ext-diff
