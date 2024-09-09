@@ -9,7 +9,8 @@ fi
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 export GOPATH="$HOME/go"
-export PATH="$HOME/.local/share/bob/nvim-bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.node_modules/bin:$HOME/.cargo/bin:$HOME/.local/scripts:$PATH"
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$HOME/.local/share/bob/nvim-bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.node_modules/bin:$HOME/.cargo/bin:$DOTNET_ROOT:$DOTNET_ROOT/tools:$HOME/.local/scripts:$PATH"
 export VISUAL="nvim"
 export EDITOR="$VISUAL"
 
@@ -164,6 +165,15 @@ fi
 
 if command -v "atuin" &> /dev/null; then
   eval "$(atuin init zsh)"
+fi
+
+
+if command -v "pnpm" &> /dev/null; then
+  export PNPM_HOME="/home/seb/.local/share/pnpm"
+  case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+  esac
 fi
 
 typeset -U PATH
