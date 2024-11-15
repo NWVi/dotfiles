@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Taken from a comment by divinebovine:
+# https://github.com/NuGet/Home/issues/4103#issuecomment-1118853494
+find . -iname '*.csproj' | while read -r PROJECT; do
+  echo "Updating $PROJECT..."
+  for PACKAGE in $(dotnet list "$PROJECT" package --outdated | grep '>' | sed -r 's/^ *> ([a-zA-Z0-9\.]*) .*$/\1/gm'); do
+    dotnet add "$PROJECT" package "$PACKAGE"
+  done
+  echo "Done!"
+done
+echo Update Complete

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# Check if at least two arguments are provided
+if [ $# -lt 2 ]; then
+  echo "Usage: $0 <w|h|v|p> <dotnet-command> [-p project] -- [arguments...]"
+  exit 1
+fi
+
+# Get the first argument to decide between window or pane
+mode=$1
+shift
+
+# Get the second argument
+cmd=$1
+shift
+
+# Check if a project is given
+if [ "$1" == "-p" ]; then
+  shift
+  project_name="$1"
+  if [ ! -e "$project_name" ]; then
+    # Select project using fzf
+    project="$(find . -name '*.csproj' -type f | fzf --height 40% --reverse --prompt="Select project: ")"
+  else
+    shift
+  fi
+  project="--project $project_name"
+fi
+
+# Check for the separator
+if [ "$1" == "--" ]; then
+  shift
+  # Store the remaining arguments in a variable
+  args="$*"
+else
+  args=""
+fi
+
+# Open a new tmux window or pane and run the dotnet command with the provided arguments
+case "$mode" in
+w) tmux new-window -dn "$cmd $project_name" "dotnet $cmd $project $args; read" ;;
+h) tmux split-window -dh "dotnet $cmd $project $args; read" ;;
+v) tmux split-window -dv "dotnet $cmd $project $args; read" ;;
+p) tmux popup -E "dotnet $cmd $project $args; read" ;;
+*)
+  echo "Invalid mode: $mode. Use 'w' for window, 'p' for popup, 'h' for horizontal pane or 'v' for vertical pane."
+  exit 1
+  ;;
+esac
