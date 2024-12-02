@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Check if at least one arguments are provided
+if [ -z "$1" ]; then
+  echo "Usage: tmux-cd <directory>"
+  exit 1
+fi
+
+# Get the first argument
+TARGET_DIR=$(realpath "$1")
+
+for _pane in $(tmux list-panes -F '#P'); do
+  # Change the directory
+  tmux send-keys -t "$_pane" "cd $TARGET_DIR" c-m
+
+  # clear pane
+  tmux send-keys -t "$_pane" "clear" c-m
+done
