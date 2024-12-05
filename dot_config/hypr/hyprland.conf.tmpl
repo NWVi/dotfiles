@@ -220,6 +220,15 @@ device {
   sensitivity = -0.5
 }
 
+
+{{- if eq .chezmoi.hostname "Archer" }}
+device {
+  name = wacom-intuos-s-pen
+  output = DP-1
+  region_position = 0 720
+  region_size = 1280 720
+}
+{{- end }}
 misc {
   middle_click_paste = false
 }
@@ -228,7 +237,7 @@ misc {
 xwayland {
   force_zero_scaling = true
 }
-{{- end}}
+{{- end }}
 
 # Example windowrule v1
 # windowrule = float, ^(kitty)$
