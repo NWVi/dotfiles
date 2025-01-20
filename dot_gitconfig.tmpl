@@ -1,68 +1,69 @@
 [user]
-    name = Sebastian Olsen
-    email = {{ .email | quote }}
-    signingkey = /home/seb/.ssh/id_github.pub
+  name = Sebastian Olsen
+  email = {{ .email | quote }}
+  signingkey = /home/seb/.ssh/id_github.pub
 
 [credential]
-    helper = cache --timeout=3600
+  helper = cache --timeout=3600
 
 [core]
-    quotepath = false
-    autocrlf = input
-    excludesFile = ~/.gitignore
-    pager = delta
+  quotepath = false
+  autocrlf = input
+  excludesFile = ~/.gitignore
+  pager = delta
 
 [diff]
-    tool = difftastic
-    # Use better, descriptive initials (c, i, w) instead of a/b.
-    mnemonicprefix = yes
-    colorMoved = default
+  tool = difftastic
+  # Use better, descriptive initials (c, i, w) instead of a/b.
+  mnemonicprefix = yes
+  colorMoved = default
 
 [difftool]
-        prompt = false
+  prompt = false
 
 [difftool "difftastic"]
-        cmd = difft "$LOCAL" "$REMOTE"
+  cmd = difft "$LOCAL" "$REMOTE"
 
 [merge]
-    tool = nvim
-    conflictstyle = diff3
+  tool = nvim
+  conflictstyle = diff3
 
 [pager]
-        difftool = true
+  difftool = true
 
 [pull]
-    rebase = merges
+  rebase = merges
 
 [rebase]
-    autoStash = true
-    stat = true
+  autoStash = true
+  stat = true
+  updateRefs = true
 
 [log]
-    abbrevCommit = true
+  abbrevCommit = true
 
 [interactive]
-    diffFilter = delta --color-only
+  diffFilter = delta --color-only
 
 [delta]
-    navigate = true  # use n and N to move between diff sections
-    file-decoration-style = 11 overline
-    file-style = 232 bold 11
-    file-copied-label = [C]
-    file-modified-label = [M]
-    file-removed-label = [⛌]
-    file-renamed-label = [→]
+  navigate = true  # use n and N to move between diff sections
+  file-decoration-style = 11 overline
+  file-style = 232 bold 11
+  file-copied-label = [C]
+  file-modified-label = [M]
+  file-removed-label = [⛌]
+  file-renamed-label = [→]
 
 [init]
-    defaultBranch = main
+  defaultBranch = main
 
 [gpg]
-    format = ssh
+  format = ssh
 
 [alias]
-    lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
-    lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
-    lg = lg1
-    dft = difftool
-    # `git dlog` to show `git log -p` with difftastic.
-    dlog = -c diff.external=difft log -p --ext-diff
+  lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
+  lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+  lg = lg1
+  dft = difftool
+  # `git dlog` to show `git log -p` with difftastic.
+  dlog = -c diff.external=difft log -p --ext-diff
