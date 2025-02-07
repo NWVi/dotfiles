@@ -221,14 +221,19 @@ device {
 }
 
 
-{{- if eq .chezmoi.hostname "Archer" }}
 device {
   name = wacom-intuos-s-pen
+{{- if eq .chezmoi.hostname "Archer" }}
   output = DP-1
   region_position = 0 720
   region_size = 1280 720
-}
+{{- else if eq .chezmoi.hostname "seb-archlinux" }}
+  output = DP-2
+  # region_position = 0 864
+  # region_size = 1536 864
 {{- end }}
+
+}
 misc {
   middle_click_paste = false
 }
@@ -238,6 +243,10 @@ xwayland {
   force_zero_scaling = true
 }
 {{- end }}
+
+ecosystem {
+  no_update_news = true
+}
 
 # Example windowrule v1
 # windowrule = float, ^(kitty)$
@@ -250,7 +259,7 @@ xwayland {
 $mainMod = SUPER
 
 # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-bind = $mainMod, RETURN, exec, kitty
+bind = $mainMod, RETURN, exec, ghostty --gtk-single-instance=true
 bind = $mainMod SHIFT, Q, killactive
 bind = $mainMod SHIFT, SPACE, togglefloating
 # bind = $mainMod, D, exec, wofi --show drun
