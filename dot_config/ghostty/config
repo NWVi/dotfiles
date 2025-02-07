@@ -1,0 +1,26 @@
+window-decoration = false
+gtk-titlebar = false
+gtk-adwaita = false
+
+window-padding-x = 4
+window-padding-y = 4
+
+mouse-hide-while-typing = true
+
+font-size = 10
+font-family = "JetBrainsMono Nerd Font"
+font-style = Medium
+font-style-bold = Bold
+font-style-italic = Medium Italic
+font-style-bold-italic = Bold Italic
+
+theme = "Kanagawa Wave"
+background-opacity = 0.90
+
+# avoid annoying close confirmation, which allways triggers
+confirm-close-surface = false
+
+mouse-scroll-multiplier = 0.25
+
+# The minimum contrast ratio between the foreground and background colors.
+# minimum-contrast = 1
