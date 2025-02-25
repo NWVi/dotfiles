@@ -12,35 +12,66 @@
   excludesFile = ~/.gitignore
   pager = delta
 
+[commit]
+  verbose = true  # show diff in the commit message editor
+
+[branch]
+  sort = -committerdate  # sort branches by last commit date
+
+[column]
+	ui = auto  # use columns for listing branches
+
+[tag]
+  sort = version:refname  # sort tags by version
+
 [diff]
   tool = difftastic
-  # Use better, descriptive initials (c, i, w) instead of a/b.
-  mnemonicprefix = yes
-  colorMoved = default
+  mnemonicPrefix = true  # use i/w/c instead of a/b/c (index, worktree, commit)
+  colorMoved = plain     # color moved code
+  renames = true         # detect renames
+  algorithm = histogram  # better diffing
 
 [difftool]
-  prompt = false
+  prompt = false  # don't prompt for confirmation
 
 [difftool "difftastic"]
   cmd = difft "$LOCAL" "$REMOTE"
 
 [merge]
   tool = nvim
-  conflictstyle = diff3
+  conflictstyle = zdiff3  # Show conflicts in a 3-way diff (<<< HEAD, ||| Common ancestor, >>> Incomming)
 
 [pager]
-  difftool = true
+  difftool = true  # use pager if diff is too large
+
+[push]
+  default = simple        # push the current branch to its remote branch (same name)
+  autoSetupRemote = true  # create a remote branch when pushing a new branch
+  ; followTags = true     # push tags to remote when pushing branches
 
 [pull]
-  rebase = merges
+  rebase = true     # rebase instead of merge when pulling
+
+[fetch]
+  prune = true      # remove local branches that no longer exist on remote
+  pruneTags = true  # remove tags that no longer exist on remote
+  all = true        # fetch updates from all remotes (--no-all to bypass)
 
 [rebase]
-  autoStash = true
-  stat = true
-  updateRefs = true
+  autoStash = true   # stash changes before rebasing (in case of dirty worktree)
+  autoSquash = true  # auto squash `fixup!`, `squash!` and `amend!` commits
+  updateRefs = true  # auto update any branch that points to commits that are being rebased
+  stat = true        # show diffstat since last rebase
+
+[rerere]
+  enabled = true     # record resolution of conflicted merges, so seen conflicts can be auto resolved
+  autoupdate = true  # update index after rerere
 
 [log]
   abbrevCommit = true
+
+[help]
+  autocorrect = prompt
 
 [interactive]
   diffFilter = delta --color-only
