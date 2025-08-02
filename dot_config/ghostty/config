@@ -14,7 +14,7 @@ font-style-bold = Bold
 font-style-italic = Medium Italic
 font-style-bold-italic = Bold Italic
 
-theme = "Kanagawa Wave"
+theme = dark:kanagawa-wave,light:kanagawa-lotus
 background-opacity = 0.90
 
 # avoid annoying close confirmation, which allways triggers
