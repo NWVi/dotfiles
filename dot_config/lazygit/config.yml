@@ -7,6 +7,11 @@ git:
   paging:
     externalDiffCommand: difft --color=always --display=inline --syntax-highlight=on --tab-width=2
 
+keybinding:
+  commits:
+    moveDownCommit: <c-d>
+    moveUpCommit: <c-u>
+
 customCommands:
   - key: "<c-p>"
     command: "git remote prune {{.SelectedRemote.Name}}"
