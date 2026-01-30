@@ -356,26 +356,23 @@ bind = , XF86MonBrightnessDown, exec, brightnessctl -s set 5%-
 {{- end }}
 
 # Window rules
-windowrulev2 = workspace 3 silent,class:^(jetbrains-rider)$
-windowrulev2 = workspace 4 silent,class:^(org.remmina.Remmina)$
-windowrulev2 = workspace 5 silent,class:^(steam)$
-windowrulev2 = workspace special silent,class:^(discord)$
-windowrulev2 = workspace special silent,class:^(Spotify)$
-windowrulev2 = workspace special silent,class:^(Slack)$
+windowrule = match:class ^(discord)$, workspace special silent
+windowrule = match:class ^(Spotify)$, workspace special silent
+windowrule = match:class ^(Slack)$, workspace special silent
 
-# XWayland bridge screen sharing
-# https://wiki.hyprland.org/Useful-Utilities/Screen-Sharing/#xwayland
-windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
-windowrulev2 = noanim,class:^(xwaylandvideobridge)$
-windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
-windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
+windowrule = match:class ^(kitty)$, opacity 1.0 override 0.8 override
+windowrule = match:class (.*), opacity 1.0 override 0.9 override
 
-# xwaylandvideobridge
-# windowrulev2 = opacity 0.0 override,class:^(xwaylandvideobridge)$
-# windowrulev2 = noanim,class:^(xwaylandvideobridge)$
-# windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
-# windowrulev2 = maxsize 1 1,class:^(xwaylandvideobridge)$
-# windowrulev2 = noblur,class:^(xwaylandvideobridge)$
+# XWayland video bridge fix
+# https://wiki.hypr.land/Useful-Utilities/Screen-Sharing/#xwayland
+windowrule {
+    name = xwayland-video-bridge-fixes
+    match:class = xwaylandvideobridge
 
-windowrulev2 = opacity 1.0 override 0.8 override,class:^(kitty)$
-windowrulev2 = opacity 1.0 override 0.9 override,class:.*
+    no_initial_focus = true
+    no_focus = true
+    no_anim = true
+    no_blur = true
+    max_size = 1 1
+    opacity = 0.0
+}
