@@ -154,16 +154,6 @@ _dotnet_zsh_complete()
 }
 compdef _dotnet_zsh_complete dotnet
 
-# fnm
-if command -v "fnm" &> /dev/null; then
-  export PATH=$HOME/.fnm:$PATH
-  eval "$(fnm env)"
-fi
-
-# github copilot
-# eval "$(github-copilot-cli alias -- "$0")"
-# eval "$(gh copilot alias -- zsh)"
-
 if command -v "zoxide" &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
@@ -172,6 +162,9 @@ if command -v "atuin" &> /dev/null; then
   eval "$(atuin init zsh)"
 fi
 
+if command -v "mise" &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
 
 if command -v "pnpm" &> /dev/null; then
   export PNPM_HOME="/home/seb/.local/share/pnpm"
