@@ -210,7 +210,6 @@ master {
 
 gestures {
   # See https://wiki.hyprland.org/Configuring/Variables/ for more
-  workspace_swipe = false
 }
 
 # Example per-device config
@@ -223,17 +222,17 @@ device {
 
 device {
   name = wacom-intuos-s-pen
-{{- if eq .chezmoi.hostname "Archer" }}
+  {{- if eq .chezmoi.hostname "Archer" }}
   output = DP-1
   region_position = 0 720
   region_size = 1280 720
-{{- else if eq .chezmoi.hostname "seb-archlinux" }}
+  {{- else if eq .chezmoi.hostname "seb-archlinux" }}
   output = DP-2
   # region_position = 0 864
   # region_size = 1536 864
-{{- end }}
-
+  {{- end }}
 }
+
 misc {
   middle_click_paste = false
 }
@@ -246,14 +245,8 @@ xwayland {
 
 ecosystem {
   no_update_news = true
+  no_donation_nag = true
 }
-
-# Example windowrule v1
-# windowrule = float, ^(kitty)$
-# Example windowrule v2
-# windowrulev2 = float,class:^(kitty)$,title:^(kitHOSTNAME=myhostnamety)$
-# See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
-
 
 # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 $mainMod = SUPER
@@ -356,6 +349,7 @@ bind = , XF86MonBrightnessDown, exec, brightnessctl -s set 5%-
 {{- end }}
 
 # Window rules
+# See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 windowrule = match:class ^(discord)$, workspace special silent
 windowrule = match:class ^(Spotify)$, workspace special silent
 windowrule = match:class ^(Slack)$, workspace special silent
