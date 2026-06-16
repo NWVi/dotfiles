@@ -1,0 +1,359 @@
+-- Hyprland configuration (Lua API, Hyprland >= 0.55).
+-- Refer to the wiki: https://wiki.hypr.land/
+--
+-- Managed by chezmoi. The ONLY templated value is the hostname below; everything
+-- else branches with native Lua so this stays a normal, LSP-checkable Lua file.
+local host = "{{ .chezmoi.hostname }}"
+
+-------------------------------
+---- ENVIRONMENT VARIABLES ----
+-------------------------------
+
+if host == "Archer" then
+	-- Nvidia
+	hl.env("LIBVA_DRIVER_NAME", "nvidia")
+	hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+	hl.env("__GL_GSYNC_ALLOWED", "1")
+	hl.env("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
+	hl.env("WEBKIT_DISABLE_COMPOSITING_MODE", "1")
+end
+
+hl.env("GDK_SCALE", "1")
+hl.env("GDK_BACKEND", "wayland,x11,*")
+hl.env("GTK_THEME", "Kanagawa-B-LB")
+hl.env("CLUTTER_BACKEND", "wayland")
+
+hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
+hl.env("XDG_SESSION_TYPE", "wayland")
+hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+
+hl.env("XCURSOR_SIZE", "16")
+hl.env("HYPRCURSOR_SIZE", "16")
+
+-- QT
+hl.env("QT_QPA_PLATFORM", "wayland;xcb")
+hl.env("QT_QPA_PLATFORMTHEME", "qt5ct")
+hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
+hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
+
+------------------
+---- MONITORS ----
+------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Monitors/
+if host == "Archer" then
+	hl.monitor({ output = "DP-1", mode = "2560x1440@120", position = "0x0", scale = 1, bitdepth = 8 })
+	hl.monitor({
+		output = "HDMI-A-1",
+		mode = "1920x1080@60",
+		position = "2560x0",
+		scale = 1,
+		transform = 1,
+		bitdepth = 8,
+	})
+elseif host == "Archie" then
+	hl.monitor({ output = "eDP-1", mode = "highrr", position = "0x0", scale = 1, bitdepth = 10 })
+elseif host == "seb-archlinux" then
+	hl.monitor({ output = "DP-2", mode = "preferred", position = "0x0", scale = 1.25, bitdepth = 10 })
+	hl.monitor({ output = "DP-3", mode = "preferred", position = "3072x0", scale = 1.25, bitdepth = 10 })
+end
+-- Fallback for any other / new monitor
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+
+-------------------
+---- AUTOSTART ----
+-------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Autostart/
+-- exec-once equivalent: run on initial startup.
+hl.on("hyprland.start", function()
+	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	hl.exec_cmd("playerctld daemon")
+	hl.exec_cmd("hypridle")
+	hl.exec_cmd("dunst")
+	hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
+	hl.exec_cmd("hyprshade auto")
+	-- fix gnome cursor size...
+	hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme Adwaita")
+
+	-- waybar
+	hl.exec_cmd("waybar")
+
+	-- Wallpaper
+	hl.exec_cmd("awww-daemon")
+	if host == "Archer" then
+		hl.exec_cmd("awww img -o DP-1 ~/Pictures/wallpapers/Arcane/Arcane.S01E07.The.Boy.Savior.17.53.png")
+		hl.exec_cmd("awww img -o HDMI-A-1 ~/Pictures/wallpapers/Arcane/Arcane.S01E07.The.Boy.Savior.17.49.png")
+		hl.exec_cmd("awww restore")
+	elseif host == "Archie" then
+		hl.exec_cmd("awww img -o eDP-1 ~/Pictures/wallpapers/Arcane/Arcane.S01E07.The.Boy.Savior.17.53.png")
+	elseif host == "seb-archlinux" then
+		hl.exec_cmd("awww img -o DP-2 ~/Pictures/wallpapers/Arcane/Arcane.S01E07.The.Boy.Savior.17.53.png")
+		hl.exec_cmd("awww img -o DP-3 ~/Pictures/wallpapers/Arcane/Arcane.S01E07.The.Boy.Savior.17.49.png")
+		hl.exec_cmd("awww restore")
+	end
+
+	-- Applets
+	hl.exec_cmd("nm-applet")
+	hl.exec_cmd("blueman-applet")
+	if host ~= "seb-archlinux" then
+		hl.exec_cmd("dropbox")
+	end
+	if host == "seb-archlinux" then
+		hl.exec_cmd("slack")
+		hl.exec_cmd("spotify")
+	end
+end)
+
+--------------------
+---- WORKSPACES ----
+--------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
+-- Workspaces 1-5 -> primary monitor, 6-10 -> secondary monitor.
+local primaryMonitor, secondaryMonitor
+if host == "Archer" then
+	primaryMonitor, secondaryMonitor = "DP-1", "HDMI-A-1"
+elseif host == "Archie" then
+	primaryMonitor, secondaryMonitor = "eDP-1", "eDP-3"
+elseif host == "seb-archlinux" then
+	primaryMonitor, secondaryMonitor = "DP-2", "DP-3"
+end
+
+if primaryMonitor then
+	for i = 1, 10 do
+		local monitor = (i <= 5) and primaryMonitor or secondaryMonitor
+		hl.workspace_rule({ workspace = tostring(i), monitor = monitor, default = true })
+	end
+end
+
+---------------
+---- INPUT ----
+---------------
+
+hl.config({
+	input = {
+		kb_layout = "us,no",
+		kb_options = "grp:alts_toggle",
+
+		follow_mouse = 1,
+
+		sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
+
+		touchpad = {
+			natural_scroll = false,
+		},
+	},
+})
+
+-----------------------
+---- LOOK AND FEEL ----
+-----------------------
+
+hl.config({
+	general = {
+		gaps_in = 5,
+		gaps_out = (host == "Archie") and 5 or 20,
+		border_size = (host == "seb-archlinux") and 4 or 2,
+
+		col = {
+			active_border = { colors = { "rgba(7FB4CAee)", "rgba(7AA89Fee)" }, angle = 45 },
+			inactive_border = "rgba(727169aa)",
+		},
+
+		layout = "dwindle",
+	},
+
+	cursor = {
+		inactive_timeout = 5, -- seconds
+		no_hardware_cursors = (host == "Archer"),
+	},
+
+	decoration = {
+		rounding = 5,
+
+		blur = {
+			enabled = true,
+			size = 3,
+			passes = 1,
+		},
+
+		shadow = {
+			enabled = true,
+			range = 4,
+			render_power = 3,
+			color = "rgba(1a1a1aee)",
+		},
+	},
+
+	animations = {
+		enabled = true,
+	},
+
+	dwindle = {
+		preserve_split = true,
+		force_split = 2, -- 0 = follow mouce, 1 = always left, 2 = always right
+	},
+
+	master = {
+		new_on_top = true,
+	},
+
+	misc = {
+		middle_click_paste = false,
+	},
+
+	ecosystem = {
+		no_update_news = true,
+		no_donation_nag = true,
+	},
+})
+
+if host == "seb-archlinux" then
+	hl.config({
+		xwayland = {
+			force_zero_scaling = true,
+		},
+	})
+end
+
+-- Animations: see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
+hl.curve("myBezier", { type = "bezier", points = { { 0.05, 0.9 }, { 0.1, 1.05 } } })
+
+hl.animation({ leaf = "windows", enabled = true, speed = 7, bezier = "myBezier" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 7, bezier = "default", style = "popin 80%" })
+hl.animation({ leaf = "border", enabled = true, speed = 10, bezier = "default" })
+hl.animation({ leaf = "borderangle", enabled = true, speed = 8, bezier = "default" })
+hl.animation({ leaf = "fade", enabled = true, speed = 7, bezier = "default" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 6, bezier = "default" })
+
+-----------------
+---- DEVICES ----
+-----------------
+
+-- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/
+hl.device({
+	name = "epic-mouse-v1",
+	sensitivity = -0.5,
+})
+
+if host == "Archer" then
+	hl.device({
+		name = "wacom-intuos-s-pen",
+		output = "DP-1",
+		region_position = { 0, 720 },
+		region_size = { 1280, 720 },
+	})
+elseif host == "seb-archlinux" then
+	hl.device({
+		name = "wacom-intuos-s-pen",
+		output = "DP-2",
+		-- region_position = { 0, 864 },
+		-- region_size     = { 1536, 864 },
+	})
+end
+
+---------------------
+---- KEYBINDINGS ----
+---------------------
+
+local mainMod = "SUPER"
+
+-- See https://wiki.hypr.land/Configuring/Basics/Binds/
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("ghostty --gtk-single-instance=true"))
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
+hl.bind(mainMod .. " + SHIFT + SPACE", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle", mode = "fullscreen" }))
+hl.bind(mainMod .. " + P", hl.dsp.window.pseudo()) -- dwindle
+hl.bind(mainMod .. " + S", hl.dsp.layout("togglesplit")) -- dwindle
+
+-- Menus
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("~/.config/rofi/scripts/launcher.sh"))
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("~/.config/rofi/scripts/powermenu.sh"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.local/bin/grimblast copy area"))
+
+-- Focus / move / resize with arrows and hjkl
+local moves = {
+	{ keys = { "left", "H" }, dir = "left", resize = { x = -30, y = 0 } },
+	{ keys = { "right", "L" }, dir = "right", resize = { x = 30, y = 0 } },
+	{ keys = { "up", "K" }, dir = "up", resize = { x = 0, y = -30 } },
+	{ keys = { "down", "J" }, dir = "down", resize = { x = 0, y = 30 } },
+}
+for _, m in ipairs(moves) do
+	for _, key in ipairs(m.keys) do
+		hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = m.dir }))
+		hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ direction = m.dir }))
+		hl.bind(
+			mainMod .. " + ALT + " .. key,
+			hl.dsp.window.resize({ x = m.resize.x, y = m.resize.y, relative = true })
+		)
+	end
+end
+
+-- Switch to / move window to workspaces 1-10 (key 0 -> workspace 10)
+for i = 1, 10 do
+	local key = i % 10
+	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+end
+
+-- Scratchpad / special workspace
+hl.bind(mainMod .. " + SHIFT + MINUS", hl.dsp.window.move({ workspace = "special" }))
+hl.bind(mainMod .. " + MINUS", hl.dsp.workspace.toggle_special())
+
+-- Scroll through workspaces with mainMod + scroll
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+
+-- Move / resize windows with mainMod + SHIFT + LMB/RMB and dragging
+hl.bind(mainMod .. " + SHIFT + mouse:272", hl.dsp.window.drag(), { mouse = true })
+hl.bind(mainMod .. " + SHIFT + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- Volume controls
+hl.bind(
+	"XF86AudioRaiseVolume",
+	hl.dsp.exec_cmd("wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"),
+	{ locked = true, repeating = true }
+)
+hl.bind(
+	"XF86AudioLowerVolume",
+	hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
+	{ locked = true, repeating = true }
+)
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+
+-- Media controls
+hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
+hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+
+if host == "Archie" then
+	-- Brightness controls
+	hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -s set +5%"), { locked = true })
+	hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -s set 5%-"), { locked = true })
+end
+
+--------------------------------
+---- WINDOWS AND WORKSPACES ----
+--------------------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
+hl.window_rule({ match = { class = "^(discord)$" }, workspace = "special silent" })
+hl.window_rule({ match = { class = "^(Spotify)$" }, workspace = "special silent" })
+hl.window_rule({ match = { class = "^(Slack)$" }, workspace = "special silent" })
+
+hl.window_rule({ match = { class = "(.*)" }, opacity = "1.0 override 0.9 override" })
+
+-- XWayland video bridge fix
+-- https://wiki.hypr.land/Useful-Utilities/Screen-Sharing/#xwayland
+hl.window_rule({
+	name = "xwayland-video-bridge-fixes",
+	match = { class = "xwaylandvideobridge" },
+
+	no_initial_focus = true,
+	no_focus = true,
+	no_anim = true,
+	no_blur = true,
+	max_size = "1 1",
+	opacity = "0.0",
+})
