@@ -4,8 +4,10 @@ gui:
       - reverse
   nerdFontsVersion: "3"
 git:
-  paging:
-    externalDiffCommand: difft --color=always --display=inline --syntax-highlight=on --tab-width=2
+  pagers:
+    - pager: delta --dark --paging=never
+    - externalDiffCommand: difft --color=always
+    - externalDiffCommand: difft --color=always --display=inline --tab-width=2
 
 keybinding:
   commits:
@@ -74,9 +76,9 @@ customCommands:
         title: "Breaking change"
         options:
           - name: "no"
-            value: ""
+            value: "no"
           - name: "yes"
-            value: "!"
+            value: "yes"
       - type: "input"
         title: "message"
         key: "Message"
@@ -85,5 +87,5 @@ customCommands:
         key: "Confirm"
         title: "Commit"
         body: "Are you sure you want to commit?"
-    command: "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'"
+    command: 'git commit --message ''{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{ if eq .Form.Breaking "yes" }}!{{ end }}: {{.Form.Message}}'''
     loadingText: "Creating conventional commit..."
