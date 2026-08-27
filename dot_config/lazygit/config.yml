@@ -4,16 +4,16 @@ gui:
       - reverse
   nerdFontsVersion: "3"
 git:
-  pagers:
-    - pager: delta --dark --paging=never
-    - externalDiffCommand: difft --color=always
-    - externalDiffCommand: difft --color=always --display=inline --tab-width=2
-
+  diffRenderers:
+    - command: delta --dark --paging=never
+    - command: difft --color=always
+      type: extDiff
+    - command: difft --color=always --display=inline --tab-width=2
+      type: extDiff
 keybinding:
   commits:
     moveDownCommit: <c-d>
     moveUpCommit: <c-u>
-
 customCommands:
   - key: "<c-p>"
     command: "git remote prune {{.SelectedRemote.Name}}"
