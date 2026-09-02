@@ -173,25 +173,25 @@ description = "navigate right (vim/herdr)"
 [[keys.command]]
 key = "alt+h"
 type = "plugin_action"
-command = "smart-splits-resize.left"
+command = "smart-splits.nvim.resize_left"
 description = "resize left (vim/herdr)"
 
 [[keys.command]]
 key = "alt+j"
 type = "plugin_action"
-command = "smart-splits-resize.down"
+command = "smart-splits.nvim.resize_down"
 description = "resize down (vim/herdr)"
 
 [[keys.command]]
 key = "alt+k"
 type = "plugin_action"
-command = "smart-splits-resize.up"
+command = "smart-splits.nvim.resize_up"
 description = "resize up (vim/herdr)"
 
 [[keys.command]]
 key = "alt+l"
 type = "plugin_action"
-command = "smart-splits-resize.right"
+command = "smart-splits.nvim.resize_right"
 description = "resize right (vim/herdr)"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
