@@ -1,0 +1,32 @@
+id = "smart-splits-resize"
+name = "smart-splits-resize"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Seamless Alt+h/j/k/l resizing across herdr panes and Vim/Neovim splits"
+platforms = ["linux", "macos"]
+
+# Bound to alt+h/j/k/l in ~/.config/herdr/config.toml as plugin_action entries.
+
+[[actions]]
+id = "left"
+title = "Resize left (Vim/herdr)"
+contexts = ["global"]
+command = ["bash", "scripts/herdr-resize.sh", "left"]
+
+[[actions]]
+id = "down"
+title = "Resize down (Vim/herdr)"
+contexts = ["global"]
+command = ["bash", "scripts/herdr-resize.sh", "down"]
+
+[[actions]]
+id = "up"
+title = "Resize up (Vim/herdr)"
+contexts = ["global"]
+command = ["bash", "scripts/herdr-resize.sh", "up"]
+
+[[actions]]
+id = "right"
+title = "Resize right (Vim/herdr)"
+contexts = ["global"]
+command = ["bash", "scripts/herdr-resize.sh", "right"]

@@ -55,6 +55,22 @@ auto_switch = false
 # manifest_check = true
 
 [keys]
+# tmux parity (see ~/.tmux.conf)
+split_horizontal = "prefix+h"   # tmux: bind h split-window -v
+split_vertical = "prefix+v"     # tmux: bind v split-window -h
+detach = "prefix+d"             # tmux: prefix+d
+workspace_picker = "prefix+s"   # tmux: prefix+s choose-session
+settings = "prefix+shift+s"     # moved off prefix+s
+
+# navigation lives on ctrl+hjkl via the smart-splits plugin below
+focus_pane_left = ""
+focus_pane_down = ""
+focus_pane_up = ""
+focus_pane_right = ""
+
+# no herdr equivalent: tmux prefix+C-x (synchronize-panes), prefix+= (attach -c),
+# prefix+f (tmux-sessionizer)
+
 # Prefix key to enter prefix mode (default: "ctrl+b")
 # Examples: "ctrl+b", "f12", "esc", "-"
 # Action bindings use explicit syntax: "prefix+n" requires the prefix;
@@ -153,6 +169,30 @@ key = "ctrl+l"
 type = "plugin_action"
 command = "smart-splits.nvim.right"
 description = "navigate right (vim/herdr)"
+
+[[keys.command]]
+key = "alt+h"
+type = "plugin_action"
+command = "smart-splits-resize.left"
+description = "resize left (vim/herdr)"
+
+[[keys.command]]
+key = "alt+j"
+type = "plugin_action"
+command = "smart-splits-resize.down"
+description = "resize down (vim/herdr)"
+
+[[keys.command]]
+key = "alt+k"
+type = "plugin_action"
+command = "smart-splits-resize.up"
+description = "resize up (vim/herdr)"
+
+[[keys.command]]
+key = "alt+l"
+type = "plugin_action"
+command = "smart-splits-resize.right"
+description = "resize right (vim/herdr)"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.
