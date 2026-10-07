@@ -114,7 +114,8 @@ if command -v "eza" &> /dev/null; then
 fi
 
 chpwd() {
-  ls
+  # Only run `ls` if the output is a terminal (not a pipe or file)
+  [[ -t 1 ]] && ls
 }
 
 # Colored man pages
