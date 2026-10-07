@@ -11,8 +11,6 @@ export ZSH="$HOME/.oh-my-zsh"
 export GOPATH="$HOME/go"
 export DOTNET_ROOT="$HOME/.dotnet"
 export PATH="$HOME/.local/share/bob/nvim-bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.node_modules/bin:$HOME/.cargo/bin:$DOTNET_ROOT:$DOTNET_ROOT/tools:$HOME/.local/scripts:$PATH"
-export VISUAL="nvim"
-export EDITOR="$VISUAL"
 
 # source tokens
 source $HOME/.tokens.sh
@@ -54,16 +52,23 @@ DISABLE_AUTO_UPDATE="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting vi-mode)
 source $ZSH/oh-my-zsh.sh
+
+# Undo oh-my-zsh defaults that change standard command behaviour:
+# grep alias silently skips .git/.venv/venv dirs; global aliases expand `...` anywhere.
+unalias grep 2>/dev/null
+unalias '...' '....' '.....' '......' 2>/dev/null
+
 # User configuration
 # export MANPATH="/usr/local/man:$MANPATH"
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
+  export VISUAL='vim'
 else
-  export EDITOR='nvim'
+  export VISUAL='nvim'
 fi
+export EDITOR="$VISUAL"
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 # ssh
@@ -90,7 +95,7 @@ alias dnr="dotnet run"
 alias dnw="dotnet watch"
 
 # The Primeagen's tmux-sessionizer script for creating tmux sessions
-bindkey -s ^f "tmux-sessionizer\n"
+bindkey -s '^f' "tmux-sessionizer\n"
 
 # enable vi mode
 # bindkey -v
@@ -110,13 +115,13 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 if command -v "eza" &> /dev/null; then
-  alias ls="eza"
+  alias l="eza"
 fi
 
-chpwd() {
-  # Only run `ls` if the output is a terminal (not a pipe or file)
-  [[ -t 1 ]] && ls
-}
+# Only run `ls` after cd if the output is a terminal (not a pipe or file)
+autoload -Uz add-zsh-hook
+_ls_on_cd() { [[ -t 1 ]] && ls }
+add-zsh-hook chpwd _ls_on_cd
 
 # Colored man pages
 man() {
@@ -133,7 +138,7 @@ man() {
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
   ssh-agent -t 8h > "$XDG_RUNTIME_DIR/ssh-agent.env"
 fi
-if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
+if [[ ! -S "$SSH_AUTH_SOCK" && -r "$XDG_RUNTIME_DIR/ssh-agent.env" ]]; then
   source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
 fi
 
@@ -186,3 +191,10 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 export SQLCMDMAXVARTYPEWIDTH=36
 export SQLCMDMAXFIXEDTYPEWIDTH=36
+
+# Safe-chain: wraps package managers to block malicious installs
+if [[ -r "$HOME/.safe-chain/scripts/init-posix.sh" ]]; then
+  source "$HOME/.safe-chain/scripts/init-posix.sh"
+  # Keep plain python/python3 unwrapped (only there to catch `python -m pip`); pip/uv/npm etc. stay protected.
+  unfunction python python3 2>/dev/null
+fi
