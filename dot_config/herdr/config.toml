@@ -149,49 +149,49 @@ focus_pane_right = ""
 [[keys.command]]
 key = "ctrl+h"
 type = "plugin_action"
-command = "smart-splits.nvim.left"
+command = "smart-splits-backend-herdr.left"
 description = "navigate left (vim/herdr)"
 
 [[keys.command]]
 key = "ctrl+j"
 type = "plugin_action"
-command = "smart-splits.nvim.down"
+command = "smart-splits-backend-herdr.down"
 description = "navigate down (vim/herdr)"
 
 [[keys.command]]
 key = "ctrl+k"
 type = "plugin_action"
-command = "smart-splits.nvim.up"
+command = "smart-splits-backend-herdr.up"
 description = "navigate up (vim/herdr)"
 
 [[keys.command]]
 key = "ctrl+l"
 type = "plugin_action"
-command = "smart-splits.nvim.right"
+command = "smart-splits-backend-herdr.right"
 description = "navigate right (vim/herdr)"
 
 [[keys.command]]
 key = "alt+h"
 type = "plugin_action"
-command = "smart-splits.nvim.resize_left"
+command = "smart-splits-backend-herdr.resize_left"
 description = "resize left (vim/herdr)"
 
 [[keys.command]]
 key = "alt+j"
 type = "plugin_action"
-command = "smart-splits.nvim.resize_down"
+command = "smart-splits-backend-herdr.resize_down"
 description = "resize down (vim/herdr)"
 
 [[keys.command]]
 key = "alt+k"
 type = "plugin_action"
-command = "smart-splits.nvim.resize_up"
+command = "smart-splits-backend-herdr.resize_up"
 description = "resize up (vim/herdr)"
 
 [[keys.command]]
 key = "alt+l"
 type = "plugin_action"
-command = "smart-splits.nvim.resize_right"
+command = "smart-splits-backend-herdr.resize_right"
 description = "resize right (vim/herdr)"
 
 # Legacy indexed shortcut config is still parsed for compatibility.
