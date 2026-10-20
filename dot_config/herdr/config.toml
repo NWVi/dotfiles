@@ -68,6 +68,12 @@ focus_pane_down = ""
 focus_pane_up = ""
 focus_pane_right = ""
 
+# tmux: prefix+{ / prefix+} (swap-pane), directional here
+swap_pane_left = ["prefix+shift+h", "prefix+left"]
+swap_pane_down = ["prefix+shift+j", "prefix+down"]
+swap_pane_up = ["prefix+shift+k", "prefix+up"]
+swap_pane_right = ["prefix+shift+l", "prefix+right"]
+
 # no herdr equivalent: tmux prefix+C-x (synchronize-panes), prefix+= (attach -c),
 # prefix+f (tmux-sessionizer)
 
