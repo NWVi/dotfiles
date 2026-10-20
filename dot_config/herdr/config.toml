@@ -75,7 +75,7 @@ swap_pane_up = ["prefix+shift+k", "prefix+up"]
 swap_pane_right = ["prefix+shift+l", "prefix+right"]
 
 # direct indexed switching; alt+1..9 left to ghostty tabs and atuin
-switch_tab = ["prefix+1..9", "ctrl+1..9"]
+focus_agent = "ctrl+1..9"
 switch_workspace = "ctrl+shift+1..9"
 
 # no herdr equivalent: tmux prefix+C-x (synchronize-panes), prefix+= (attach -c),
