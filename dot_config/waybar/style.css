@@ -284,3 +284,19 @@ label:focus {
 #scratchpad.empty {
   background-color: transparent;
 }
+
+#custom-bus {
+  padding: 0 10px;
+  margin: 0 4px;
+  background-color: #64727d;
+  color: #ffffff;
+}
+
+#custom-bus.soon {
+  background-color: #eb4d4b;
+}
+
+#custom-bus.error,
+#custom-bus.none {
+  background-color: rgba(100, 114, 125, 0.5);
+}

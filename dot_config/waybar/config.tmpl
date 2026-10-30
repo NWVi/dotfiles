@@ -5,7 +5,11 @@
     // "width": 1280, // Waybar width
     "spacing": 4, // Gaps between modules (4px)
     // Choose the order of the modules
+    {{- if eq .chezmoi.hostname "seb-archlinux" }}
+    "modules-left": ["custom/bus", "hyprland/workspaces" ],
+    {{- else }}
     "modules-left": ["hyprland/workspaces"],
+    {{- end }}
     "modules-center": ["hyprland/window"],
     {{- if eq .chezmoi.hostname "Archie" }}
     "modules-right": ["idle_inhibitor", "pulseaudio", "network", "cpu", "memory", "temperature", "backlight", "keyboard-state", "hyprland/language", "battery", "clock", "tray"],
@@ -118,6 +122,11 @@
     "hyprland/window": {
       "max-length": 200,
       "separate-outputs": true
+    },
+    "custom/bus": {
+        "exec": "~/.config/waybar/scripts/svipper-waybar.py --stop Postterminalen --city Tromsø --line 40 --direction Slettaelva",
+        "return-type": "json",
+        "interval": 60
     }
 }
 // vim: ft=jsonc
