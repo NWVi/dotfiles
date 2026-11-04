@@ -13,7 +13,7 @@ export DOTNET_ROOT="$HOME/.dotnet"
 export PATH="$HOME/.local/share/bob/nvim-bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.node_modules/bin:$HOME/.cargo/bin:$DOTNET_ROOT:$DOTNET_ROOT/tools:$HOME/.local/scripts:$PATH"
 
 # source tokens
-source $HOME/.tokens.sh
+[[ -r $HOME/.tokens.sh ]] && source $HOME/.tokens.sh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -89,7 +89,9 @@ alias lg="lazygit"
 alias qemu="qemu-system-x86_64 -drive file=image,format=raw,index=0,if=floppy"
 alias hd="hexdump -C"
 alias gtree="git ls-tree -r --name-only HEAD | tree --fromfile"
+{{- if eq .chezmoi.os "linux" }}
 alias yay="paru"
+{{- end }}
 alias dn="dotnet"
 alias dnr="dotnet run"
 alias dnw="dotnet watch"
@@ -102,8 +104,14 @@ bindkey -s '^f' "tmux-sessionizer\n"
 VI_MODE_SET_CURSOR=true
 
 # FZF
+{{- if eq .chezmoi.os "linux" }}
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
+{{- else }}
+if command -v "fzf" &> /dev/null; then
+  source <(fzf --zsh)
+fi
+{{- end }}
 
 # --files: List files that would be searched but do not search
 # --no-ignore: Do not respect .gitignore, etc...
@@ -134,13 +142,15 @@ man() {
   command man "$@"
 }
 
-# Start SSH agent
+{{- if eq .chezmoi.os "linux" }}
+# Start SSH agent (macOS runs one via launchd)
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
   ssh-agent -t 8h > "$XDG_RUNTIME_DIR/ssh-agent.env"
 fi
 if [[ ! -S "$SSH_AUTH_SOCK" && -r "$XDG_RUNTIME_DIR/ssh-agent.env" ]]; then
   source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
 fi
+{{- end }}
 
 # dotnet
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -173,7 +183,11 @@ if command -v "mise" &> /dev/null; then
 fi
 
 if command -v "pnpm" &> /dev/null; then
-  export PNPM_HOME="/home/seb/.local/share/pnpm"
+{{- if eq .chezmoi.os "darwin" }}
+  export PNPM_HOME="$HOME/Library/pnpm"
+{{- else }}
+  export PNPM_HOME="$HOME/.local/share/pnpm"
+{{- end }}
   case ":$PATH:" in
     *":$PNPM_HOME:"*) ;;
     *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -185,7 +199,14 @@ typeset -U PATH
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+{{- if eq .chezmoi.os "darwin" }}
+export ANDROID_HOME=$HOME/Library/Android/sdk
+if [[ -d /Library/Java/JavaVirtualMachines/zulu-17.jdk ]]; then
+  export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+fi
+{{- else }}
 export ANDROID_HOME=$HOME/Android/Sdk
+{{- end }}
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
