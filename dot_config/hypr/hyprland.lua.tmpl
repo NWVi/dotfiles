@@ -75,14 +75,18 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("playerctld daemon")
 	hl.exec_cmd("hypridle")
-	hl.exec_cmd("dunst")
 	hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
 	hl.exec_cmd("hyprshade auto")
 	-- fix gnome cursor size...
 	hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme Adwaita")
 
-	-- waybar
-	hl.exec_cmd("waybar")
+	-- Bar and notifications: quickshell on seb-archlinux, waybar + dunst elsewhere
+	if host == "seb-archlinux" then
+		hl.exec_cmd("qs")
+	else
+		hl.exec_cmd("dunst")
+		hl.exec_cmd("waybar")
+	end
 
 	-- Wallpaper
 	hl.exec_cmd("awww-daemon")
@@ -233,6 +237,7 @@ hl.animation({ leaf = "border", enabled = true, speed = 10, bezier = "default" }
 hl.animation({ leaf = "borderangle", enabled = true, speed = 8, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 7, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 6, bezier = "default" })
+hl.animation({ leaf = "fadeLayers", enabled = false }) -- added to preven quickshell from fading in/out.
 
 -----------------
 ---- DEVICES ----
@@ -275,8 +280,16 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo()) -- dwindle
 hl.bind(mainMod .. " + S", hl.dsp.layout("togglesplit")) -- dwindle
 
 -- Menus
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("~/.config/rofi/scripts/launcher.sh"))
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("~/.config/rofi/scripts/powermenu.sh"))
+if host == "seb-archlinux" then
+	hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("qs ipc call launcher toggle"))
+	hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("qs ipc call powermenu toggle"))
+	hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notifications toggle"))
+	hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("qs ipc call status toggle"))
+	hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("qs ipc call media toggle"))
+else
+	hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("~/.config/rofi/scripts/launcher.sh"))
+	hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("~/.config/rofi/scripts/powermenu.sh"))
+end
 if host == "seb-archlinux" then
 	hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.local/bin/grimblast copysave area"))
 else
@@ -333,10 +346,16 @@ hl.bind(
 )
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
--- Media controls
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+-- Media controls; quickshell sends them to the player its media pill follows
+if host == "seb-archlinux" then
+	hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("qs ipc call media previous"), { locked = true })
+	hl.bind("XF86AudioNext", hl.dsp.exec_cmd("qs ipc call media next"), { locked = true })
+	hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("qs ipc call media playPause"), { locked = true })
+else
+	hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+	hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
+	hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+end
 
 if host == "Archie" then
 	-- Brightness controls
@@ -359,6 +378,9 @@ hl.window_rule({ match = { class = "^(Slack)$" }, workspace = "special silent" }
 hl.window_rule({ match = { class = "^(com.dualog.workbench)$" }, workspace = "special silent", pseudo = true })
 
 hl.window_rule({ match = { class = "(.*)" }, opacity = "1.0 override 0.9 override" })
+
+-- Quickshell popups animate themselves (the melt), so no compositor fade on map/unmap
+hl.layer_rule({ name = "quickshell-no-anim", match = { namespace = "^quickshell" }, no_anim = true })
 
 -- XWayland video bridge fix
 -- https://wiki.hypr.land/Useful-Utilities/Screen-Sharing/#xwayland
