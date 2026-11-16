@@ -284,6 +284,7 @@ hl.bind(mainMod .. " + S", hl.dsp.layout("togglesplit")) -- dwindle
 -- Menus
 if host == "seb-archlinux" then
 	hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("qs ipc call launcher toggle"))
+	hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("qs ipc call switcher toggle"))
 	hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("qs ipc call powermenu toggle"))
 	hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notifications toggle"))
 	hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("qs ipc call status toggle"))
