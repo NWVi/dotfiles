@@ -1,11 +1,7 @@
 general {
-{{- if eq .chezmoi.hostname "seb-archlinux" }}
   # quickshell's lock screen; hyprlock if quickshell isn't running
-  lock_cmd = playerctl --all-players stop & qs ipc call lock lock || hyprlock
+  lock_cmd = playerctl --all-players stop & qs ipc call lock lock || pidof hyprlock || hyprlock
   inhibit_sleep = 3                           # hold suspend until the session is locked
-{{- else }}
-  lock_cmd = playerctl --all-players stop & pidof hyprlock || hyprlock
-{{- end }}
   unlock_cmd = loginctl unlock-session
 {{- if eq .chezmoi.hostname "seb-archlinux" }}
   # Absolute path: systemd user services don't get the interactive shell PATH.
@@ -13,7 +9,7 @@ general {
   on_unlock_cmd = {{ .chezmoi.homeDir }}/.cargo/bin/work-hours event unlock
 {{- end }}
   before_sleep_cmd = loginctl lock-session    # lock before suspend.
-  after_sleep_cmd = hyprctl dispatch dpms on  # to avoid having to press a key twice to turn on the display.
+  after_sleep_cmd = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'  # to avoid having to press a key twice to turn on the display.
 }
 
 {{- if eq .chezmoi.hostname "Archie" }}
@@ -36,9 +32,9 @@ listener {
 }
 
 listener {
-  timeout = 600                                 # 10min
-  on-timeout = hyprctl dispatch dpms off        # screen off when timeout has passed
-  on-resume = hyprctl dispatch dpms on          # screen on when activity is detected after timeout has fired.
+  timeout = 360                                 # 6min
+  on-timeout = hyprctl dispatch 'hl.dsp.dpms({action = "off"})'        # screen off when timeout has passed
+  on-resume = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'          # screen on when activity is detected after timeout has fired.
 }
 
 listener {
@@ -58,7 +54,7 @@ listener {
 
 listener {
   timeout = 2100                                # 35min
-  on-timeout = hyprctl dispatch dpms off        # screen off when timeout has passed
-  on-resume = hyprctl dispatch dpms on          # screen on when activity is detected after timeout has fired.
+  on-timeout = hyprctl dispatch 'hl.dsp.dpms({action = "off"})'        # screen off when timeout has passed
+  on-resume = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'          # screen on when activity is detected after timeout has fired.
 }
 {{- end }}
