@@ -27,8 +27,13 @@ hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
-hl.env("XCURSOR_SIZE", "16")
-hl.env("HYPRCURSOR_SIZE", "16")
+if host == "seb-archlinux" then
+	hl.env("XCURSOR_SIZE", "24")
+	hl.env("HYPRCURSOR_SIZE", "24")
+else
+	hl.env("XCURSOR_SIZE", "16")
+	hl.env("HYPRCURSOR_SIZE", "16")
+end
 
 -- QT
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
@@ -54,8 +59,8 @@ if host == "Archer" then
 elseif host == "Archie" then
 	hl.monitor({ output = "eDP-1", mode = "highrr", position = "0x0", scale = 1, bitdepth = 10 })
 elseif host == "seb-archlinux" then
-	hl.monitor({ output = "DP-2", mode = "preferred", position = "0x0", scale = 1.25, bitdepth = 10 })
-	hl.monitor({ output = "DP-3", mode = "preferred", position = "3072x0", scale = 1.25, bitdepth = 10 })
+	hl.monitor({ output = "DP-2", mode = "preferred", position = "0x0", scale = 1.25, bitdepth = 8 })
+	hl.monitor({ output = "DP-3", mode = "preferred", position = "3072x0", scale = 1.25, bitdepth = 8 })
 end
 -- Fallback for any other / new monitor
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
@@ -100,8 +105,10 @@ hl.on("hyprland.start", function()
 		hl.exec_cmd("dropbox")
 	end
 	if host == "seb-archlinux" then
-		hl.exec_cmd("slack")
 		hl.exec_cmd("spotify")
+		hl.exec_cmd("gtk-launch workbench.desktop")
+		-- Absolute path: the session PATH has no ~/.cargo/bin.
+		hl.exec_cmd(os.getenv("HOME") .. "/.cargo/bin/work-hours daemon")
 	end
 end)
 
@@ -270,7 +277,11 @@ hl.bind(mainMod .. " + S", hl.dsp.layout("togglesplit")) -- dwindle
 -- Menus
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("~/.config/rofi/scripts/launcher.sh"))
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("~/.config/rofi/scripts/powermenu.sh"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.local/bin/grimblast copy area"))
+if host == "seb-archlinux" then
+	hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.local/bin/grimblast copysave area"))
+else
+	hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.local/bin/grimblast copy area"))
+end
 
 -- Focus / move / resize with arrows and hjkl
 local moves = {
@@ -339,8 +350,13 @@ end
 
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 hl.window_rule({ match = { class = "^(discord)$" }, workspace = "special silent" })
-hl.window_rule({ match = { class = "^(Spotify)$" }, workspace = "special silent" })
+hl.window_rule({
+	match = { class = "^(Spotify)$" },
+	workspace = "special silent",
+	pseudo = true,
+})
 hl.window_rule({ match = { class = "^(Slack)$" }, workspace = "special silent" })
+hl.window_rule({ match = { class = "^(com.dualog.workbench)$" }, workspace = "special silent", pseudo = true })
 
 hl.window_rule({ match = { class = "(.*)" }, opacity = "1.0 override 0.9 override" })
 
