@@ -1,5 +1,11 @@
 general {
-  lock_cmd = playerctl --all-players stop & pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances.
+  lock_cmd = playerctl --all-players stop & pidof hyprlock || hyprlock
+  unlock_cmd = loginctl unlock-session
+{{- if eq .chezmoi.hostname "seb-archlinux" }}
+  # Absolute path: systemd user services don't get the interactive shell PATH.
+  on_lock_cmd = {{ .chezmoi.homeDir }}/.cargo/bin/work-hours event lock
+  on_unlock_cmd = {{ .chezmoi.homeDir }}/.cargo/bin/work-hours event unlock
+{{- end }}
   before_sleep_cmd = loginctl lock-session    # lock before suspend.
   after_sleep_cmd = hyprctl dispatch dpms on  # to avoid having to press a key twice to turn on the display.
 }

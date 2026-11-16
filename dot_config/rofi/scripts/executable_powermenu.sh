@@ -13,6 +13,11 @@ theme='powermenu'
 uptime="$(uptime -p | sed -e 's/up //g')"
 host=$(hostname)
 
+# Record a work-hours lock/unlock event, but only where the tool is installed
+# (the Hyprland host). hyprlock/swaylock/betterlockscreen all block in the
+# foreground until unlock, so the unlock event fires right after the locker exits.
+wh_event() { command -v work-hours >/dev/null 2>&1 && work-hours event "$1"; }
+
 # Options
 shutdown=' Shutdown'
 reboot=' Reboot'
@@ -97,11 +102,19 @@ case ${chosen} in
 "$lock")
   playerctl --all-players stop
   if [[ -x '/usr/bin/hyprlock' ]]; then
-    pidof hyprlock || hyprlock
+    if ! pidof hyprlock >/dev/null; then
+      #wh_event lock
+      loginctl lock-session
+      #wh_event unlock
+    fi
   elif [[ -x '/usr/bin/swaylock' ]]; then
+    wh_event lock
     swaylock --image ~/Pictures/wallpapers/planet.png
+    wh_event unlock
   elif [[ -x '/usr/bin/betterlockscreen' ]]; then
+    wh_event lock
     betterlockscreen -l dimblur
+    wh_event unlock
   fi
   ;;
 "$suspend")
